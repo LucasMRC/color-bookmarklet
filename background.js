@@ -1,6 +1,6 @@
-(function() {
 
-	const backgrounds = [ // 283 backgrounds
+(async function() {
+	const gradientsArray = [ // 282 max index
 		['#ffe259', '#ffa751'],
 		['#acb6e5', '#86fde8'],
 		['#536976', '#292E49'],
@@ -283,45 +283,68 @@
 		['#108dc7', '#ef8e38'],
 		['#11998e', '#38ef7d'],
 		['#3E5151', '#DECBA4'],
-		['#40E0D0', '#FF8C00', '#FF0080'],
+		['#40E0D0', '#FF8C00', '#FF0080']
 	];
-
-	const prevDiv = document.getElementById('gradient-div');
+	const prevDiv = document.getElementById('background');
 	if (prevDiv) {
 		prevDiv.style.opacity = 0;
-		setTimeout(() => prevDiv.remove(), 2000);
+		setTimeout(() => {prevDiv.remove();}, 2000);
 	};
+	
 	const number = max => Math.floor(Math.random() * max + 1);
-	const background = number(283);
-	const direction = `${number(359)}deg,`;
-	let gradient = '';
-	backgrounds[background].forEach((bg, i) => {
-		gradient += bg;
-		gradient += backgrounds[background][i + 1] ? ', ' : '';
-	});
-	const allElements = Array.from(document.getElementsByTagName('*')).filter(el => el.id !== 'gradient-div');
-	allElements.forEach(el => {
-		el.style.cssText = 'transition: ease 2s !important; color: inherit !important; background: transparent !important';
-	});
-	document.body.style.minHeight = '100vh';
-	document.body.style.background = 'white';
-	document.body.style.transition = 'all ease 2s';
-	document.body.style.color = `rgb(${number(255)}, ${number(255)}, ${number(255)})`;
+	const randomNumber = number(2);
+	const body = document.body;
+	const allElements = Array.from(document.getElementsByTagName('*')).filter(el => el.id !== 'background' && el.tagName !== 'BODY' && el.TagName !== 'HTML' && el.TagName !== 'HEAD' && el.TagName !== 'SCRIPT');
 	const allLinks = Array.from(document.getElementsByTagName('a'));
+	const linkColor = `rgb(${number(255)}, ${number(255)}, ${number(255)})`;
 	allLinks.forEach(link => {
-		link.style.cssText = `transition: color ease 2s; color: rgb(${number(255)}, ${number(255)}, ${number(255)}) !important;`;
+		link.style.cssText = `transition: color ease 2s; color: ${linkColor}`;
 	});
-	let div = document.createElement('div');
-	div.id = 'gradient-div';
-	div.style.minHeight = '100vh';
-	div.style.minWidth = '100vw';
-	div.style.transition = 'opacity ease 2s';
-	div.style.opacity = 0;
-	div.style.position = 'fixed';
-	div.style.zIndex = -2000;
-	div.style.top = 0;
-	div.style.left = 0;
-	div.style.background = `linear-gradient(${direction} ${gradient})`;
-	document.body.appendChild(div);
-	setTimeout(() => div.style.opacity = 1, 100);
+	body.style.background = 'transparent';
+	body.style.color = `rgb(${number(255)}, ${number(255)}, ${number(255)})`;
+	if (randomNumber === 1) {
+		const chosenBackground = gradientsArray[number(282)];
+		const direction = `${number(359)}deg,`;
+		let gradient = '';
+		chosenBackground.forEach((color, index) => {
+			gradient += color;
+			if (chosenBackground[index + 1]) gradient += ', ';
+		});
+		const div = document.createElement('div');
+		div.id = 'background';
+		div.style.minWidth = `${document.body.offsetWidth}px`;
+		div.style.minHeight = `${document.body.offsetHeight}px`;
+		div.style.background = `linear-gradient(${direction} ${gradient})`;
+		div.style.opacity = 0;
+		div.style.transition = 'ease 2s';
+		div.style.position = 'absolute';
+		div.style.top = 0;
+		div.style.left = 0;
+		div.style.zIndex = -2000;
+		body.appendChild(div);
+		setTimeout(() => {
+			div.style.opacity = 1;
+		}, 100);
+	} else {
+		const picture = await fetch('https://api.unsplash.com/photos/random?client_id=1ptpKoe2hYB88grw_eoZuF7TyI0HlU4xmGNfNFyy1Kw').then(response => response.json());
+		const img = document.createElement('img');
+		img.id = 'background';
+		img.style.width = `${document.body.offsetWidth}px`;
+		img.style.height = `${document.body.offsetHeight}px`;
+		img.src = picture.urls.raw;
+		img.style.opacity = 0;
+		img.style.transition = 'opacity ease 2s';
+		img.style.position = 'absolute';
+		img.style.top = 0;
+		img.style.left = 0;
+		img.style.zIndex = -2000;
+		body.appendChild(img);
+		setTimeout(() => {
+			img.style.opacity = 1;
+		}, 100);
+	}
+	allElements.forEach(el => {
+		el.style.cssText += 'transition: color ease 2s; background: transparent;';
+	});
+	
 })();
